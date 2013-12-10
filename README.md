@@ -10,6 +10,7 @@ API. Currently supported resources:
 * Elastic IPs (`elastic_ip`)
 * Elastic Load Balancer (`elastic_lb`)
 * AWS Resource Tags (`resource_tag`)
+* RDS Instances (`rds_instance`)
 
 Unsupported AWS resources that have other cookbooks include but are
 not limited to:
@@ -197,15 +198,44 @@ Actions:
   values.
 
 Attribute Parameters
-
 * `aws_secret_access_key`, `aws_access_key` - passed to
   `Opscode::AWS:Ec2` to authenticate, required.
 * `tags` - a hash of key value pairs to be used as resource tags,
+
   (e.g. `{ "Name" => "foo", "Environment" => node.chef_environment
   }`,) required.
 * `resource_id` - resources whose tags will be modified. The value may
   be a single ID as a string or multiple IDs in an array. If no
   `resource_id` is specified the name attribute will be used.
+
+  ## rds_instance.rb
+
+  Actions:
+
+  * `create` - Create (or modify) an RDS instance.
+  * `delete` - Delete an RDS instance.
+
+  Attribute Parameters
+
+  REQUIRED:
+
+  * `aws_secret_access_key`, `aws_access_key` - passed to
+    `Opscode::AWS:Ec2` to authenticate, required.
+  * `db_security_groups` - An array of security groups to assign to the RDS instance.
+
+  OPTIONAL:
+  * `db_subnet_group_name` - For VPC deployments, specifies which subnet where the RDS instance should be placed (defaults to none/not VPC).
+  * `engine` - The database engine to use (defaults to "mysql").
+  * `db_name` - If specified, this will be used to create an empty database on the new instance.  If not specified, no database will be created.
+  * `availability_zone` - Availability Zone in which to create single-AZ instances.  If unspecified, one will be selected automatically.
+  * `multi_az` - Create a multi-AZ RDS instance (for redundancy/failover; defaults to false).
+  * `auto_minor_version_upgrade` - Allow automatic upgrades (during maintenance periods) between minor versions of the database engine (defaults to true).
+  * `backup_retention_period` - Number of days to retain automatic backup snapshots (defaults to the Amazon default).
+  * `db_parameter_group`, `option_group_name` - Custom paramter/option group to assign to the instance (defaults to the Amazon default for the specified engine type).
+  * `engine_version` - Major database engine version to use (e.g. "5.5" for the "mysql" engine; defaults to the current Amazon default for the specified engine type).
+  * `iops` - The amount of Provisioned IOPS (input/output operations per second) to be initially allocated for the DB instance (must be an integer larger than 1000; defaults to no guaranteed IOPS).
+  * `custom` - A hash of other options that are supported by the Amazon API but
+  may not have been implemented here.
 
 Usage
 =====

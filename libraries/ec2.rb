@@ -39,6 +39,28 @@ module Opscode
         snapshot_id
       end
 
+      def group_names_to_objs(group_names=[])
+        unless group_names.empty?
+          group_objs = ec2.describe_security_groups.select do |group_obj|
+            group_names.include?group_obj[:aws_group_name]
+          end
+
+          if group_names.count != group_objs.count
+            # Some group names did not resolve to IDs or resolved to multiple
+            # IDs
+            extra_names = group_objs.map{|g| g[:aws_group_name] } - group_names
+
+            unless extra_names.empty?
+              raise "These group names could not be resolved: " +
+                "#{extra_names.join(', ')}"
+            else
+              raise "Got too many names back: " +
+                group_objs.map{|g| g[:aws_group_name] }.join(', ')
+            end
+          end
+        end
+      end
+
       def ec2
         begin
           require 'right_aws'
@@ -75,6 +97,6 @@ module Opscode
         availability_zone
       end
 
-    end
+    end # module Ec2
   end
 end

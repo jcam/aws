@@ -3,6 +3,11 @@ aws Cookbook CHANGELOG
 This file is used to list changes made in each version of the aws cookbook.
 
 
+v1.1.0
+------
+### Improvement
+- **[COOK-????](https://tickets.opscode.com/browse/COOK-????)** - Add resource `rds_instance` to manage RDS instances
+
 v1.0.0
 ------
 ### Improvement
